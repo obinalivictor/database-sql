@@ -1,122 +1,175 @@
-2.17 
 USE cape_codd;
-SELECT SKU, SKU_DESCRIPTION
-FROM INVENTORY
 
-2.18
-SELECT SKU_DESCRIPTION, SKU
-FROM INVENTORY
+-- 2.17
+SELECT SKU, SKU_Description
+FROM INVENTORY;
 
-2.19
-SELECT WAREHOUSEID
-FROM INVENTORY
+-- 2.18
+SELECT SKU_Description, SKU
+FROM INVENTORY;
 
-2.20
-SELECT DISTINCT WAREHOUSEID
-FROM INVENTORY
+-- 2.19
+SELECT WarehouseID
+FROM INVENTORY;
 
-2.21
+-- 2.20
+SELECT DISTINCT WarehouseID
+FROM INVENTORY;
+
+-- 2.21
+SELECT *
+FROM INVENTORY;
+
+-- 2.22
+SELECT SKU, WarehouseID, SKU_Description, QuantityOnHand, QuantityOnOrder
+FROM INVENTORY;
+
+-- 2.23
 SELECT *
 FROM INVENTORY
+WHERE QuantityOnHand > 0;
 
-2.22
-SELECT SKU, WAREHOUSEID, SKU_DESCRIPTION, QUANTITYONHAND, QUANTITYONORDER
-FROM inventory;
-
-2.23
-SELECT *
+-- 2.24
+SELECT SKU, SKU_Description
 FROM INVENTORY
-WHERE QUANTITYONHAND > 0
+WHERE QuantityOnHand = 0;
 
-2.24
-SELECT SKU, SKU_DESCRIPTION
+-- 2.25
+SELECT SKU, SKU_Description
 FROM INVENTORY
-WHERE QUANTITYONHAND = 0
+WHERE QuantityOnHand = 0
+ORDER BY WarehouseID ASC;
 
-2.25
-SELECT SKU, SKU_DESCRIPTION
+-- 2.26
+SELECT SKU, SKU_Description, WarehouseID
 FROM INVENTORY
-WHERE QUANTITYONHAND = 0 
-ORDER BY WAREHOUSEID ASC;
+WHERE QuantityOnHand > 0
+ORDER BY WarehouseID DESC, SKU ASC;
 
-2.26
-SELECT SKU, SKU_DESCRIPTION, WAREHOUSEID
+-- 2.27
+SELECT SKU, SKU_Description, WarehouseID
 FROM INVENTORY
-WHERE QUANTITYONHAND > 0
-ORDER BY WAREHOUSEID DESC, SKU ASC
+WHERE QuantityOnHand = 0 AND QuantityOnOrder > 0
+ORDER BY WarehouseID DESC, SKU ASC;
 
-2.27
-SELECT SKU, SKU_DESCRIPTION, WAREHOUSEID
+-- 2.28
+SELECT SKU, SKU_Description, WarehouseID
 FROM INVENTORY
-WHERE QUANTITYONHAND = 0 && QUANTITYONORDER > 0
-ORDER BY WAREHOUSEID DESC, SKU ASC
+WHERE QuantityOnHand = 0 OR QuantityOnOrder = 0
+ORDER BY WarehouseID DESC, SKU ASC;
 
-2.28
-SELECT SKU, SKU_DESCRIPTION, WAREHOUSEID
+-- 2.29
+SELECT SKU, SKU_Description, WarehouseID, QuantityOnHand
 FROM INVENTORY
-WHERE QUANTITYONHAND = 0 || QUANTITYONORDER = 0
-ORDER BY WAREHOUSEID DESC, SKU ASC
+WHERE QuantityOnHand > 1 AND QuantityOnHand < 10;
 
-2.29
-SELECT  SKU, SKU_DESCRIPTION, WAREHOUSEID, QUANTITYONHAND
+-- 2.30
+SELECT SKU, SKU_Description, WarehouseID, QuantityOnHand
 FROM INVENTORY
-WHERE QUANTITYONHAND > 1 && QUANTITYONHAND < 10
+WHERE QuantityOnHand BETWEEN 2 AND 9;
 
-2.30
-SELECT SKU, SKU_DESCRIPTION, WAREHOUSEID, QUANTITYONHAND
+-- 2.31
+SELECT DISTINCT SKU, SKU_Description
 FROM INVENTORY
-WHERE QUANTITYONHAND BETWEEN 1 AND 9  
+WHERE SKU_Description LIKE '%Half-dome%';
 
-2.31
-SELECT DISTINCT SKU, SKU_DESCRIPTION
+-- 2.32
+SELECT DISTINCT SKU, SKU_Description
 FROM INVENTORY
-WHERE SKU_DESCRIPTION  LIKE "%Half-dome%";
+WHERE SKU_Description LIKE '%CLIMB%';
 
-2.32
-SELECT DISTINCT SKU, SKU_DESCRIPTION
+-- 2.33
+SELECT DISTINCT SKU, SKU_Description
 FROM INVENTORY
-WHERE SKU_DESCRIPTION  LIKE "%CLIMB%";
+WHERE SKU_Description LIKE '__d%';
 
-2.33
-SELECT DISTINCT SKU, SKU_DESCRIPTION
+-- 2.34
+SELECT COUNT(QuantityOnHand) AS HandQuantityNumber,
+       SUM(QuantityOnHand)   AS SumOfQuantityRows,
+       AVG(QuantityOnHand)   AS Average,
+       MIN(QuantityOnHand)   AS Minimum,
+       MAX(QuantityOnHand)   AS Maximum
+FROM INVENTORY;
+
+-- 2.35 (notes)
+-- COUNT(*) counts the number of rows in the table.
+-- COUNT(column-name) counts rows where that column is not null.
+-- SUM calculates the sum of all values for numeric columns only.
+
+-- 2.36
+SELECT WarehouseID, SUM(QuantityOnHand) AS TotalItemsOnHand
 FROM INVENTORY
-WHERE SKU_DESCRIPTION LIKE "__d%"
+GROUP BY WarehouseID
+ORDER BY TotalItemsOnHand DESC;
 
-2.34
-SELECT COUNT(QuantityOnHand) AS HANDQUANTITYNUMBER, 
-SUM(QuantityOnHand) AS SUMOFQUANTITYROWS, 
-AVG(QUANTITYONHAND) AS AVERAGE, 
-MIN(QUANTITYONHAND) AS MINIMUM,
-MAX(QUANTITYONHAND) AS MAXIMUM
+-- 2.37
+SELECT WarehouseID, SUM(QuantityOnHand) AS TotalItemsOnHandLT3
 FROM INVENTORY
+WHERE QuantityOnHand < 3
+GROUP BY WarehouseID
+ORDER BY TotalItemsOnHandLT3 DESC;
 
-
-2.35
-COUNT
-(*) -> count the number of rows in the table
-({column-name}) - 
-so count, count the number of rows in the table or a specified column name
-and it must not be null
-SUM
-calculates the sum of all values for numeric columns only.
-
-2.36
-SELECT WAREHOUSEID, SUM(QUANTITYONHAND) AS TotalItemsOnHand
+-- 2.38
+SELECT WarehouseID, SUM(QuantityOnHand) AS TotalItemsOnHandLT3
 FROM INVENTORY
-GROUP BY WAREHOUSEID
-ORDER BY TotalItemsOnHand DESC
-
-2.37
-SELECT WAREHOUSEID, SUM(QUANTITYONHAND) AS TotalItemsOnHandLT3
-FROM INVENTORY
-WHERE QUANTITYONHAND < 3
-GROUP BY WAREHOUSEID
-ORDER BY TotalItemsOnHandLT3 DESC
-
-2.38
-SELECT WAREHOUSEID, SUM(QUANTITYONHAND) AS TotalItemsOnHandLT3
-FROM INVENTORY
-WHERE QUANTITYONHAND < 3
-GROUP BY WAREHOUSEID
+WHERE QuantityOnHand < 3
+GROUP BY WarehouseID
 HAVING COUNT(SKU) < 2
-ORDER BY TotalItemsOnHandLT3 DESC
+ORDER BY TotalItemsOnHandLT3 DESC;
+
+
+-- 2.41
+
+SELECT I.SKU, I.SKU_Description, I.WarehouseID, W.WarehouseCity, W.WarehouseState
+FROM INVENTORY I
+JOIN WAREHOUSE W ON I.WarehouseID = W.WarehouseID
+WHERE W.WarehouseCity IN ('Atlanta', 'Bangor', 'Chicago');
+
+
+-- 2.42
+SELECT I.SKU, I.SKU_Description, I.WarehouseID, W.WarehouseCity, W.WarehouseState
+FROM INVENTORY I
+JOIN WAREHOUSE W ON I.WarehouseID = W.WarehouseID
+WHERE W.WarehouseCity != 'Atlanta'
+  AND W.WarehouseCity != 'Bangor'
+  AND W.WarehouseCity != 'Chicago';
+
+
+-- 2.43
+SELECT I.SKU, I.SKU_Description, I.WarehouseID, W.WarehouseCity, W.WarehouseState
+FROM INVENTORY I
+JOIN WAREHOUSE W ON I.WarehouseID = W.WarehouseID
+WHERE W.WarehouseCity NOT IN ('Atlanta', 'Bangor', 'Chicago');
+
+
+-- 2.44
+SELECT (SKU_Description +'is located in'+ W.WarehouseCity ) AS itemLOCATION
+FROM INVENTORY I
+JOIN WAREHOUSE W ON I.WarehouseID = W.WarehouseID;
+
+
+-- 2.45
+SELECT SKU, SKU_Description, WarehouseID
+FROM INVENTORY
+WHERE WarehouseID IN (
+    SELECT WarehouseID
+    FROM WAREHOUSE
+    WHERE Manager = 'Lucille Smith'
+);
+
+
+
+
+
+
+
+
+SELECT 1;
+
+
+
+
+
+
+
+
